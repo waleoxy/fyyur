@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e2c3a1772b64
+Revision ID: 9d5826b9a23f
 Revises: 
-Create Date: 2022-06-04 21:43:52.392629
+Create Date: 2022-06-09 07:45:56.925560
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e2c3a1772b64'
+revision = '9d5826b9a23f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -25,10 +25,10 @@ def upgrade():
     sa.Column('state', sa.String(length=120), nullable=True),
     sa.Column('phone', sa.String(length=120), nullable=True),
     sa.Column('genres', sa.String(length=120), nullable=True),
+    sa.Column('website', sa.String(length=120), nullable=True),
     sa.Column('image_link', sa.String(length=500), nullable=True),
     sa.Column('facebook_link', sa.String(length=120), nullable=True),
-    sa.Column('website_link', sa.String(length=120), nullable=True),
-    sa.Column('seeking_venues', sa.Boolean(), nullable=True),
+    sa.Column('seeking_venue', sa.Boolean(), nullable=True),
     sa.Column('seeking_description', sa.String(length=120), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
@@ -42,18 +42,17 @@ def upgrade():
     sa.Column('genres', sa.String(length=120), nullable=True),
     sa.Column('image_link', sa.String(length=500), nullable=True),
     sa.Column('facebook_link', sa.String(length=120), nullable=True),
-    sa.Column('website_link', sa.String(length=120), nullable=True),
+    sa.Column('website', sa.String(length=120), nullable=True),
     sa.Column('seeking_talent', sa.Boolean(), nullable=True),
     sa.Column('seeking_description', sa.String(length=120), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('shows',
-    sa.Column('artist_id', sa.Integer(), nullable=False),
+    sa.Column('artist_id', sa.Integer(), nullable=True),
     sa.Column('venue_id', sa.Integer(), nullable=False),
-    sa.Column('start_time', sa.Date(), nullable=True),
+    sa.Column('start_time', sa.DateTime(), nullable=False),
     sa.ForeignKeyConstraint(['artist_id'], ['Artist.id'], ),
-    sa.ForeignKeyConstraint(['venue_id'], ['Venue.id'], ),
-    sa.PrimaryKeyConstraint('artist_id', 'venue_id')
+    sa.ForeignKeyConstraint(['venue_id'], ['Venue.id'], )
     )
     # ### end Alembic commands ###
 
