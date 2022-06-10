@@ -1,19 +1,33 @@
-{% extends 'layouts/main.html' %}
-{% block title %}Fyyur | Venues{% endblock %}
-{% block content %}
-{% for area in areas %}
+{% extends 'layouts/main.html' %} {% block title %}Fyyur | Venues{% endblock %}
+{% block content %} {% for area in areas %}
 <h3>{{ area.city }}, {{ area.state }}</h3>
-	<ul class="items">
-		{% for venue in area.venues %}
-		<li>
-			<a href="/venues/{{ venue.id }}">
-				<i class="fas fa-music"></i>
-				<div class="item">
-					<h5>{{ venue.name }}</h5>
-				</div>
-			</a>
-		</li>
-		{% endfor %}
-	</ul>
-{% endfor %}
-{% endblock %}
+<ul class="items">
+  {% for venue in area.venues %}
+  <li>
+    <a href="/venues/{{ venue.id }}">
+      <i class="fas fa-music"></i>
+      <div class="item">
+        <h5>{{ venue.name }}</h5>
+      </div>
+    </a>
+  </li>
+  <button class="del_btn" data-id="{{ venue.id }}">Delete</button>
+  {% endfor %}
+</ul>
+<script>
+  del_btns = document.querySelectorAll(".del_btn");
+  for (let index = 0; index < del_btns.length; index++) {
+    const del_btn = del_btns[index];
+    del_btn.onclick = (e) => {
+      console.log("e", e);
+      const venueId = e.target.dataset["id"];
+      fetch("/venues/" + venueId, {
+        method: "DELETE",
+      }).then(() => {
+        const item = e.target.parentElement;
+        item.remove();
+      });
+    };
+  }
+</script>
+{% endfor %} {% endblock %}
