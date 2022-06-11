@@ -145,7 +145,7 @@ def create_venue_submission():
     image_link = request.form['image_link']
     seeking_talent = request.form.get('seeking_talent')
     seeking_description = request.form['seeking_description']
-    venue = Venue(name = name, city = city , state = state, address = address, phone = phone, genres = genres, facebook_link = facebook_link, website =website, image_link = image_link, seeking_talent = Boolean(seeking_talent), seeking_description = seeking_description )
+    venue = Venue(name = name, city = city , state = state, address = address, phone = phone, genres = genres, facebook_link = facebook_link, website = website, image_link = image_link, seeking_talent = Boolean(seeking_talent), seeking_description = seeking_description )
    
     db.session.add(venue)
     db.session.commit()
@@ -214,15 +214,13 @@ def show_artist(artist_id):
   # shows the artist page with the given artist_id
   # TODO: replace with real artist data from the artist table, using artist_id
   artist = Artist.query.get(artist_id)
-
-  past_shows = list(filter(lambda x: x.start_time <
-                             datetime.today(), artist.shows))  #Anoymouse function that filters past shows
-  upcoming_shows = list(filter(lambda x: x.start_time >=
-                                 datetime.today(), artist.shows))
-
-  past_shows = list(map(lambda x: x.show_venue(), past_shows))
-  upcoming_shows = list(map(lambda x: x.show_venue(), upcoming_shows))  #Anoymouse function that filters upcoming shows
-
+  
+  past_shows_query = db.session.query(Shows).join(Venue).filter(Shows.artist_id==artist_id).filter(Shows.start_time<datetime.now()).all()
+  past_shows = list(map(lambda x: x.show_venue(), past_shows_query))
+    
+  upcoming_shows_query = db.session.query(Shows).join(Venue).filter(Shows.artist_id==artist_id).filter(Shows.start_time>datetime.now()).all()
+  upcoming_shows = list(map(lambda x: x.show_venue(), upcoming_shows_query))
+    
   data = artist.make_dict()
   data['past_shows'] = past_shows
   data['upcoming_shows'] = upcoming_shows
@@ -368,7 +366,7 @@ def create_artist_submission():
     seeking_venue = request.form.get('seeking_venue')
     seeking_description = request.form['seeking_description']
     
-    artist = Artist(name = name, city = city , state = state, phone = phone, genres = genres, facebook_link = facebook_link, website=website, image_link = image_link, seeking_venue = Boolean(seeking_venue), seeking_description = seeking_description )
+    artist = Artist(name = name, city = city , state = state, phone = phone, genres = genres, facebook_link = facebook_link, website = website, image_link = image_link, seeking_venue = Boolean(seeking_venue), seeking_description = seeking_description )
     
     db.session.add(artist)
     db.session.commit()
