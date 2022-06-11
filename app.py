@@ -107,14 +107,12 @@ def search_venues():
 def show_venue(venue_id):
     venue = Venue.query.get(venue_id)
 
-    past_shows = list(filter(lambda x: x.start_time <
-                             datetime.today(), venue.shows))
-    upcoming_shows = list(filter(lambda x: x.start_time >=
-                                 datetime.today(), venue.shows))
-
-    past_shows = list(map(lambda x: x.show_artist(), past_shows))
-    upcoming_shows = list(map(lambda x: x.show_artist(), upcoming_shows))
-
+    past_shows_query = db.session.query(Shows).join(Artist).filter(Shows.venue_id==venue_id).filter(Shows.start_time<datetime.now()).all()
+    past_shows = list(map(lambda x: x.show_artist(), past_shows_query))
+    
+    upcoming_shows_query = db.session.query(Shows).join(Artist).filter(Shows.venue_id==venue_id).filter(Shows.start_time>datetime.now()).all()
+    upcoming_shows = list(map(lambda x: x.show_artist(), upcoming_shows_query))
+    
     data = venue.make_dict()
     data['past_shows'] = past_shows
     data['upcoming_shows'] = upcoming_shows
